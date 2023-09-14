@@ -1,41 +1,59 @@
 import { useState } from 'react';
 import css from "./ContactForm.module.css";
 import { nanoid } from 'nanoid';
+import { useDispatch, useSelector } from 'react-redux';
+import { getContacts } from 'redux/selectors';
+import { addContact } from 'redux/contactsSlice';
 
-export const ContactForm = ({ onSubmit }) => {
-  const [name, setName] = useState('');
-  const [number, setNumber] = useState('');    
+export const ContactForm = () => {
+   const contacts = useSelector(getContacts);
+    const dispatch = useDispatch();
+ const [contactName, setcontactName] = useState('');
+  const [number, setNumber] = useState('');   
 
 
   const handleChange = e => {
     const { name, value } = e.currentTarget;
     switch (name) {
       case 'name':
-        setName(value);
+       setcontactName(value);
         break;
+
       case 'number':
         setNumber(value);
         break;
+
       default:
         return;
-    }    
+    }
   };
 
-  const handleSubmit = e => {
-    e.preventDefault();
-    const id = nanoid();
-    onSubmit({ name, number, id });
-    setName('');
+  const handleSubmit = event => {
+    event.preventDefault();
+
+       if (contacts.some(({ name }) => name === contactName)) {
+         window.alert(`${contactName} is already in your contacts`);
+         return;
+       }
+    
+  dispatch(
+    addContact({
+      name: contactName,
+      number,
+      id: nanoid(),
+    })
+  );
+
+    setcontactName('');
     setNumber('');
   };
-
      
     return (
       <form className={css.submit_form} onSubmit={handleSubmit}>
         <h3 className={css.name_title}>Name</h3>
         <input className={css.shape_input}
           onChange={handleChange}
-          value={name}
+          value={contactName}
           type="text"
           name="name"
           pattern="^[a-zA-Zа-яА-Я]+(([' \-][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"

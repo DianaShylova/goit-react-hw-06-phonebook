@@ -1,6 +1,10 @@
+import { useDispatch } from "react-redux";
+import { setFilter } from "redux/filterSlice";
 import css from "./Filter.module.css";
-export function Filter({ filter, onChangeFilter }) {
+
+export const Filter = () => {
+  const dispatch = useDispatch()
   return (
-    <input className={css.filter_shape} onChange={onChangeFilter} value={filter} type="text" name="filter" />
+    <input className={css.filter_shape} onChange={(event) => dispatch(setFilter(event.target.value))} type="text" name="filter" />
   );
-}
+};
